@@ -1,0 +1,276 @@
+module byzantine {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:byzantine";
+    prefix "byzantine";
+
+    revision "2015-01-05" {
+        description "Initial revision of byzantine model";
+    }
+    
+    rpc get-verification-time{
+    	output{
+    		leaf host-times{
+    			type string;
+    		}
+    		leaf switch-times{
+    			type string;
+    		}
+    		leaf link-times{
+    			type string;
+    		}
+    	}
+    }
+    
+    rpc find-max {
+        output {
+            list done-times {
+            	key round;
+                leaf round {
+                	type int32;
+                }
+                leaf experiment-type{
+                	type string;
+                }
+                leaf time {
+                    type string;
+                }
+            }
+        }
+    }
+    rpc send-port {
+        input {
+            leaf node {
+                type string;
+            }
+            leaf port {
+                type string;
+            }
+        }
+        output {
+            leaf result {
+                type string;
+            }
+        }
+    }
+    rpc cal-time {
+        output {
+            leaf time {
+                type string;
+            }
+        }
+    }
+    rpc send-message {
+        input {
+
+            leaf contentType {
+                type string;
+            }
+            leaf content {
+                type string;
+            }
+            leaf quorum {
+                type string;
+                description "1 or 2";
+            }
+        }
+        output {
+            list result-map {
+                leaf ip {
+                    type string;
+                }
+                leaf judgement {
+                    type string;
+                }
+            }
+            leaf time {
+                type string;
+            }
+            leaf result {
+                type string;
+            }
+        }
+    }
+    rpc receive-message {
+        input {
+            leaf contentType {
+                type string;
+            }
+            container message {
+                leaf id {
+                    type string;
+                }
+                leaf m {
+                    type string;
+                }
+                leaf time {
+                    type string;
+                }
+                leaf sig {
+                    type string;
+                }
+            }
+        }
+        output {
+            leaf result {
+                type string;
+            }
+        }
+    }
+    notification log-notification {
+
+        description
+                "通知写日志";
+        leaf sender {
+            description "发送者的ip";
+            type string;
+        }
+        leaf message {
+            description "发送者发送的消息";
+            type string;
+        }
+        leaf time {
+            description "发送者发送这条消息的实践";
+            type string;
+        }
+        leaf jugement {
+            description "接受者对这个消息的判断";
+            type boolean;
+        }
+    }
+
+    container assertions-info {
+        list controller-assertions {
+            key ip;
+            leaf ip {
+                type string;
+            }
+            list assertions {
+                key time;
+                leaf sender {
+                    description "发送者的ip";
+                    type string;
+                }
+                leaf message {
+                    description "发送者发送的消息";
+                    type string;
+                }
+                leaf time {
+                    description "发送者发送这条消息的实践";
+                    type string;
+                }
+                leaf jugement {
+                    description "接受者对这个消息的判断";
+                    type boolean;
+                }
+            }
+        }
+    }
+    container controllers-time {
+        list all-time {
+            key ip;
+            leaf ip {
+                type string;
+            }
+            leaf ith {
+                type string;
+            }
+            leaf time {
+                type string;
+            }
+        }
+    }
+    container controllers-info {
+        leaf total-num {
+            description "总共多少个节点";
+            type int32;
+        }
+        leaf total-faulty {
+            description "坏的节点多少个";
+            type int32;
+        }
+        leaf test-situation {
+
+            type enumeration {
+                enum "singleQuorum" {
+                    value 0;
+                    description "单仲裁测试";
+                }
+                enum "doubleQuorum" {
+                    value 1;
+                    description "双仲裁测试";
+                }
+            }
+        }
+        list controllers {
+            key ip;
+            leaf ip {
+                type string;
+            }
+            leaf belong {
+                type string;
+                description "1 2 or 12 标识他属于哪个仲裁";
+            }
+            leaf flag {
+                type enumeration {
+                    enum "benign" {
+                        description "良性的";
+                        value 0;
+                    }
+                    enum "faultyInactive" {
+                        description "被动坏节点，对于正确的消息会丢弃";
+                        value 1;
+                    }
+                    enum "faultyActive" {
+                        description "主动坏节点，对于正确消息会诬陷，对于错误消息会共谋";
+                        value 2;
+                    }
+                }
+            }
+            leaf public-key {
+                type string;
+            }
+            leaf private-key {
+                type string;
+            }
+        }
+    }
+    container topology-message {
+        list topology-messages {
+            key time-long;
+
+            leaf update-message {
+                type string;
+            }
+            leaf content-type{
+            	type string;
+            }
+
+            list verifiers {
+                key ip;
+                leaf ip {
+                    type string;
+                }
+                leaf result {
+                    type boolean;
+                }
+                leaf done-time {
+                    type string;
+                }
+                leaf time-consume {
+                    type int64;
+                }
+                leaf total-time{
+                	type int64;
+                }
+            }
+            
+            
+            leaf time {
+                type string;
+            }
+            leaf time-long{
+            	type int64;
+            }
+        }
+    }
+}

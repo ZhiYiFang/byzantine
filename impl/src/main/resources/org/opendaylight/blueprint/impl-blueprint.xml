@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!-- Copyright © 2017 zhi and others. All rights reserved. This program and 
+	the accompanying materials are made available under the terms of the Eclipse 
+	Public License v1.0 which accompanies this distribution, and is available 
+	at http://www.eclipse.org/legal/epl-v10.html -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+	odl:use-default-for-reference-types="true">
+
+	<reference id="dataBroker"
+		interface="org.opendaylight.controller.md.sal.binding.api.DataBroker"
+		odl:type="default" />
+
+	<odl:rpc-service id="salEchoService"
+		interface="org.opendaylight.yang.gen.v1.urn.opendaylight.echo.service.rev150305.SalEchoService" />
+	<odl:rpc-service id="opendaylightDirectStatisticsService"
+		interface="org.opendaylight.yang.gen.v1.urn.opendaylight.direct.statistics.rev160511.OpendaylightDirectStatisticsService"/>
+		
+	<reference id="notificationPublishService"
+		interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService" />
+		
+	<bean id="provider" class="xidian.impl.ByzantineProvider"
+		init-method="init" destroy-method="close">
+		<argument ref="dataBroker" />
+		<argument ref="notificationPublishService" />
+		<argument ref="salEchoService" />
+		<argument ref="opendaylightDirectStatisticsService"/>
+	</bean>
+	
+	<bean id="verifyListener"
+	    class="xidian.impl.VerifyListener" init-method="init"
+	    destroy-method="close">
+	    <argument ref="dataBroker"/>
+	    <argument ref="salEchoService"/>
+	    <argument ref="notificationPublishService"/>
+	    <argument ref="opendaylightDirectStatisticsService"/>
+	</bean>
+	
+	<bean id="nodesListener"
+		class="xidian.impl.message.TopologyChangeListener" init-method="init"
+		destroy-method="close">
+		<argument ref="dataBroker" />
+	</bean>
+
+	<bean id="logRecorder" class="xidian.impl.LogRecorder">
+		<argument ref="dataBroker" />
+	</bean>
+	
+	<odl:notification-listener ref="logRecorder" />
+	<odl:rpc-implementation ref="provider" />
+</blueprint>

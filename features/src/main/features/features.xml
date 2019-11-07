@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!-- Copyright © 2017 zhi and others. All rights reserved. This program and 
+	the accompanying materials are made available under the terms of the Eclipse 
+	Public License v1.0 which accompanies this distribution, and is available 
+	at http://www.eclipse.org/legal/epl-v10.html -->
+<features name="odl-byzantine-${project.version}"
+	xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+	<repository>mvn:org.opendaylight.yangtools/features-yangtools/{{VERSION}}/xml/features</repository>
+	<repository>mvn:org.opendaylight.controller/features-mdsal/{{VERSION}}/xml/features</repository>
+	<repository>mvn:org.opendaylight.mdsal.model/features-mdsal-model/{{VERSION}}/xml/features</repository>
+	<repository>mvn:org.opendaylight.netconf/features-restconf/{{VERSION}}/xml/features</repository>
+	<repository>mvn:org.opendaylight.dluxapps/features-dluxapps/{{VERSION}}/xml/features</repository>
+	<repository>mvn:org.opendaylight.openflowplugin/features-openflowplugin/${openflowplugin.version}/xml/features</repository>
+	<repository>mvn:org.opendaylight.l2switch/features-l2switch/${l2switch.version}/xml/features</repository>
+
+	<feature name='odl-byzantine-api' version='${project.version}'
+		description='OpenDaylight :: byzantine :: api'>
+		<feature version='${mdsal.model.version}'>odl-mdsal-models</feature>
+		<bundle>mvn:xidian/byzantine-api/{{VERSION}}</bundle>
+	</feature>
+	<feature name='odl-byzantine' version='${project.version}'
+		description='OpenDaylight :: byzantine'>
+		<feature version='${mdsal.version}'>odl-mdsal-broker</feature>
+		<feature version='${project.version}'>odl-byzantine-api</feature>
+		<bundle>mvn:xidian/byzantine-impl/{{VERSION}}</bundle>
+		<bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.5.2</bundle>
+		<bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.4.6</bundle>
+		<bundle>mvn:org.opendaylight.controller.model/model-inventory/1.5.0-Carbon</bundle>
+		<bundle>mvn:org.opendaylight.l2switch.hosttracker/hosttracker-model/0.5.0-Carbon</bundle>
+<!-- 		<bundle>mvn:org.opendaylight.openflowplugin/openflowplugin-api/0.4.0-Carbon</bundle>
+		<bundle>mvn:org.opendaylight.openflowplugin.model/model-flow-service/0.4.0-Carbon</bundle>
+		<bundle>mvn:org.opendaylight.openflowplugin.model/model-flow-base/0.4.0-Carbon</bundle> -->
+	</feature>
+	<feature name='odl-byzantine-rest' version='${project.version}'
+		description='OpenDaylight :: byzantine :: REST'>
+		<feature version="${project.version}">odl-byzantine</feature>
+		<feature version="${restconf.version}">odl-restconf</feature>
+	</feature>
+	<feature name='odl-byzantine-ui' version='${project.version}'
+		description='OpenDaylight :: byzantine :: UI'>
+		<feature version="${project.version}">odl-byzantine-rest</feature>
+		<feature version="${restconf.version}">odl-mdsal-apidocs</feature>
+		<feature version="${dluxapps.version}">odl-dluxapps-yangman</feature>
+	</feature>
+	<feature name='odl-byzantine-cli' version='${project.version}'
+		description='OpenDaylight :: byzantine :: CLI'>
+		<feature version="${project.version}">odl-byzantine</feature>
+		<bundle>mvn:xidian/byzantine-cli/{{VERSION}}</bundle>
+	</feature>
+
+</features>
